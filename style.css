@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap');
+
+/* 
+Fontes:
+- Títulos: 'Playfair Display', serif
+- Corpo: 'Lato', sans-serif
+*/
+
+body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    background-image: url('https://img.freepik.com/free-photo/dark-wooden-table-background-texture_1258-24735.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    color: #fdf5e6; /* Um branco mais quente, cor de pergaminho */
+}
+
+/* Overlay para escurecer um pouco o fundo e melhorar a legibilidade */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4em;
+    margin: 0;
+    color: #ffffff;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+header p {
+    font-size: 1.2em;
+    font-style: italic;
+    color: #e0d6c7;
+    margin-top: 10px;
+}
+
+main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.3); /* Fundo semi-transparente para o conteúdo */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.category-section {
+    margin-bottom: 40px;
+}
+
+.category-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8em;
+    color: #fdf5e6;
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #c9b7a2;
+    padding-bottom: 10px;
+}
+
+.menu-items-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Uma coluna para a lista */
+    gap: 20px;
+}
+
+.menu-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Imagem, Conteúdo, Preço */
+    align-items: center;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px dashed #8a7d6c;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.menu-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%; /* Imagens redondas */
+    border: 3px solid #c9b7a2;
+}
+
+.menu-item-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin: 0;
+    color: #ffffff;
+}
+
+.menu-item-description {
+    font-size: 0.9em;
+    color: #d3c8b8;
+    margin-top: 5px;
+}
+
+.menu-item-price {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #f0e6d6;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Estilos para o campo de busca */
+.search-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #c9b7a2;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fdf5e6;
+    font-size: 1.1em;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#search-input::placeholder {
+    color: #d3c8b8;
+}
+
+#search-input:focus {
+    border-color: #f0e6d6;
+    box-shadow: 0 0 10px rgba(240, 230, 214, 0.5);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: #c9b7a2;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 3em;
+    }
