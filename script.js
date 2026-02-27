@@ -1,124 +1,201 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Seletores DOM
     const menuContainer = document.getElementById('menu-container');
     const searchInput = document.getElementById('search-input');
-    let allMenuData = []; // Para armazenar todos os dados do cardápio
+    const categoryNav = document.getElementById('category-nav');
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const closeCartBtn = document.getElementById('close-cart');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartCount = document.getElementById('cart-count');
+    const cartTotalDisplay = document.getElementById('cart-total');
 
-    // Função para carregar e processar o CSV
+    // Estado da Aplicação
+    let allMenuData = [];
+    let currentCategory = 'Todos';
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // --- Inicialização ---
+    async function init() {
+        await loadMenuFromCSV('cardapio.csv');
+        updateCartUI();
+        setupEventListeners();
+    }
+
+    // --- Lógica de Dados ---
     async function loadMenuFromCSV(url) {
         try {
             const response = await fetch(url);
             const csvText = await response.text();
-
+            
             Papa.parse(csvText, {
                 header: true,
                 dynamicTyping: true,
+                skipEmptyLines: true,
                 complete: function(results) {
-                    allMenuData = results.data; // Armazena os dados originais
-                    displayMenu(allMenuData); // Exibe o cardápio completo inicialmente
+                    console.log("Produtos carregados:", results.data.length);
+                    allMenuData = results.data.filter(item => item && item.Nome && item.Nome.trim() !== ""); 
+                    createCategoryNav();
+                    renderMenu();
                 },
                 error: function(err) {
-                    console.error('Erro ao parsear CSV:', err);
-                    menuContainer.innerHTML = '<p>Erro ao carregar o cardápio. Por favor, tente novamente mais tarde.</p>';
+                    console.error("Erro no PapaParse:", err);
+                    menuContainer.innerHTML = '<p class="error-msg">Erro ao processar o cardápio.</p>';
                 }
             });
         } catch (error) {
-            console.error('Erro ao buscar o CSV:', error);
-            menuContainer.innerHTML = '<p>Erro ao carregar o cardápio. Por favor, tente novamente mais tarde.</p>';
+            console.error('Erro:', error);
+            menuContainer.innerHTML = '<p class="error-msg">Ops! Ocorreu um erro ao carregar o menu.</p>';
         }
     }
 
-    // Função para exibir o cardápio
-    function displayMenu(menuData) {
-        menuContainer.innerHTML = ''; // Limpa o container antes de adicionar novos itens
+    // --- UI: Menu & Categorias ---
+    function createCategoryNav() {
+        const categories = ['Todos', ...new Set(allMenuData.map(item => item.Categoria).filter(Boolean))];
+        categoryNav.innerHTML = categories.map(cat => `
+            <div class="category-pill ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">
+                ${cat}
+            </div>
+        `).join('');
 
-        if (menuData.length === 0) {
-            menuContainer.innerHTML = '<p style="text-align: center; color: #d3c8b8;">Nenhum item encontrado com os critérios de busca.</p>';
+        document.querySelectorAll('.category-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                currentCategory = pill.dataset.category;
+                document.querySelector('.category-pill.active').classList.remove('active');
+                pill.classList.add('active');
+                renderMenu();
+            });
+        });
+    }
+
+    function renderMenu(searchTerm = '') {
+        // Ordenar: Prato do Dia primeiro
+        const sortedData = [...allMenuData].sort((a, b) => {
+            if (a.Categoria === 'Prato do Dia') return -1;
+            if (b.Categoria === 'Prato do Dia') return 1;
+            return 0;
+        });
+
+        const filtered = sortedData.filter(item => {
+            const matchesCategory = currentCategory === 'Todos' || item.Categoria === currentCategory;
+            const matchesSearch = item.Nome.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                (item.Descricao && item.Descricao.toLowerCase().includes(searchTerm.toLowerCase()));
+            return matchesCategory && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+            menuContainer.innerHTML = '<p class="no-results">Nenhum prato encontrado para sua busca.</p>';
             return;
         }
 
-        // Agrupar itens por categoria
-        const categories = menuData.reduce((acc, item) => {
-            if (item.Categoria) { // Garante que a categoria existe
-                if (!acc[item.Categoria]) {
-                    acc[item.Categoria] = [];
-                }
-                acc[item.Categoria].push(item);
-            } else if (item.Nome) { // Itens sem categoria definida vão para uma categoria 'Outros' ou similar
-                if (!acc['Outros']) {
-                    acc['Outros'] = [];
-                }
-                acc['Outros'].push(item);
-            }
-            return acc;
-        }, {});
+        menuContainer.innerHTML = `
+            <div class="menu-grid">
+                ${filtered.map((item, index) => renderCard(item, index)).join('')}
+            </div>
+        `;
 
-        // Iterar sobre as categorias e criar as seções
-        for (const category in categories) {
-            const categorySection = document.createElement('section');
-            categorySection.classList.add('category-section');
-
-            const categoryTitle = document.createElement('h2');
-            categoryTitle.classList.add('category-title');
-            categoryTitle.textContent = category;
-            categorySection.appendChild(categoryTitle);
-
-            const menuItemsGrid = document.createElement('div');
-            menuItemsGrid.classList.add('menu-items-grid');
-
-            categories[category].forEach(item => {
-                const menuItem = document.createElement('div');
-                menuItem.classList.add('menu-item');
-
-                // Imagem do item (se existir)
-                if (item.URL_da_Foto && item.URL_da_Foto !== 'N/A') {
-                    const itemImage = document.createElement('img');
-                    itemImage.classList.add('menu-item-image');
-                    itemImage.src = item.URL_da_Foto;
-                    itemImage.alt = item.Nome;
-                    menuItem.appendChild(itemImage);
-                }
-
-                const itemContent = document.createElement('div');
-                itemContent.classList.add('menu-item-content');
-
-                const itemTitle = document.createElement('h3');
-                itemTitle.classList.add('menu-item-title');
-                itemTitle.textContent = item.Nome;
-                itemContent.appendChild(itemTitle);
-
-                const itemDescription = document.createElement('p');
-                itemDescription.classList.add('menu-item-description');
-                itemDescription.textContent = item.Descricao || ''; // Descrição opcional
-                itemContent.appendChild(itemDescription);
-
-                menuItem.appendChild(itemContent);
-
-                const itemPrice = document.createElement('span');
-                itemPrice.classList.add('menu-item-price');
-                // Corrected price parsing
-                const priceValue = parseFloat(item.Preco.replace('R$', '').replace(',', '.'));
-                itemPrice.textContent = `R$ ${priceValue ? priceValue.toFixed(2).replace('.', ',') : 'N/A'}`;
-                menuItem.appendChild(itemPrice);
-
-                menuItemsGrid.appendChild(menuItem);
+        // Adiciona eventos aos botões "Adicionar"
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const index = e.target.closest('.card').dataset.index;
+                const item = filtered[index];
+                addToCart(item);
             });
-            categorySection.appendChild(menuItemsGrid);
-            menuContainer.appendChild(categorySection);
-        }
+        });
     }
 
-    // Adiciona o event listener para o campo de busca
-    searchInput.addEventListener('input', (event) => {
-        const searchTerm = event.target.value.toLowerCase();
-        const filteredMenu = allMenuData.filter(item => {
-            const nameMatch = item.Nome.toLowerCase().includes(searchTerm);
-            const descriptionMatch = item.Descricao ? item.Descricao.toLowerCase().includes(searchTerm) : false;
-            const categoryMatch = item.Categoria ? item.Categoria.toLowerCase().includes(searchTerm) : false;
-            return nameMatch || descriptionMatch || categoryMatch;
-        });
-        displayMenu(filteredMenu);
-    });
+    function renderCard(item, index) {
+        const priceFormatted = formatCurrency(parsePrice(item.Preco));
+        const isSpecial = item.Categoria === 'Prato do Dia' ? '<span class="badge">Especial</span>' : '';
+        return `
+            <div class="card" data-index="${index}">
+                ${isSpecial}
+                <img src="${item.URL_da_Foto || 'https://via.placeholder.com/400x300?text=Sem+Foto'}" class="card-img" alt="${item.Nome}" onerror="this.src='https://via.placeholder.com/400x300?text=Madero'">
+                <div class="card-body">
+                    <h3 class="card-title">${item.Nome}</h3>
+                    <p class="card-desc">${item.Descricao || 'Uma experiência única de sabor.'}</p>
+                    <div class="card-footer">
+                        <span class="price">${priceFormatted}</span>
+                        <button class="add-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
-    // Carregar o cardápio do arquivo CSV (substitua 'cardapio.csv' pelo caminho real do seu arquivo)
-    loadMenuFromCSV('cardapio.csv');
+    // --- Lógica do Carrinho ---
+    function addToCart(item) {
+        const existing = cart.find(c => c.Nome === item.Nome);
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({ ...item, quantity: 1 });
+        }
+        updateCartUI();
+        cartSidebar.classList.remove('hidden'); // Abre o carrinho ao adicionar
+    }
+
+    function removeFromCart(itemName) {
+        cart = cart.filter(item => item.Nome !== itemName);
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Contagem de itens
+        const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+        cartCount.textContent = totalItems;
+
+        // Lista de itens
+        cartItemsContainer.innerHTML = cart.map(item => {
+            const price = parsePrice(item.Preco) * item.quantity;
+            return `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <strong>${item.Nome}</strong><br>
+                        <small>${item.quantity}x ${formatCurrency(parsePrice(item.Preco))}</small>
+                    </div>
+                    <div class="cart-item-actions">
+                        <span class="item-price">${formatCurrency(price)}</span>
+                        <button class="remove-item" onclick="removeFromCart('${item.Nome}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Preço Total
+        const totalValue = cart.reduce((acc, item) => acc + (parsePrice(item.Preco) * item.quantity), 0);
+        cartTotalDisplay.textContent = formatCurrency(totalValue);
+
+        // Adiciona evento de remover após renderizar (usando delegação ou global)
+        window.removeFromCart = removeFromCart; 
+    }
+
+    // --- Auxiliares ---
+    function parsePrice(price) {
+        if (!price) return 0;
+        if (typeof price === 'number') return price;
+        return parseFloat(String(price).replace('R$', '').replace(',', '.').trim()) || 0;
+    }
+
+    function formatCurrency(value) {
+        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function setupEventListeners() {
+        searchInput.addEventListener('input', (e) => renderMenu(e.target.value));
+        cartToggle.addEventListener('click', () => cartSidebar.classList.remove('hidden'));
+        closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('hidden'));
+        
+        document.getElementById('checkout-btn').addEventListener('click', () => {
+            if (cart.length === 0) return alert('Seu carrinho está vazio!');
+            const msg = `Olá! Gostaria de fazer o seguinte pedido:\n\n${cart.map(i => `${i.quantity}x ${i.Nome}`).join('\n')}\n\nTotal: ${cartTotalDisplay.textContent}`;
+            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(msg)}`, '_blank');
+        });
+    }
+
+    init();
 });

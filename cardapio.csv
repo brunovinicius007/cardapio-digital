@@ -1,2 +1,13 @@
 Categoria,Nome,Descricao,Preco,URL_da_Foto
-Bebidas,Coca-Cola Lata,Lata de 350ml gelada,"R$ 10,00", https://www.imigrantesbebidas.com.br/bebida/refrigerante/refrigerante-coca-cola-lata-350-ml.jpg
+Prato do Dia,Filé de Tilápia Grelhado,Acompanha arroz integral, legumes no vapor e purê de mandioquinha. Especial de hoje!,"R$ 45,00",https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format
+Entradas,Bruschetta Italiana,Pão artesanal tostado com tomates frescos e manjericão,"R$ 28,00",https://images.unsplash.com/photo-1572656631137-7935297eff55?w=500&auto=format
+Entradas,Bolinhos de Bacalhau,6 unidades crocantes servidas com maionese de ervas,"R$ 42,00",https://images.unsplash.com/photo-1541529086526-db283c563270?w=500&auto=format
+Pratos Principais,Risoto de Camarão,Arroz arbóreo cremoso com camarões rosa e limão siciliano,"R$ 78,00",https://images.unsplash.com/photo-1512058560366-cd2427ff222d?w=500&auto=format
+Pratos Principais,Filé ao Poivre,Filé mignon grelhado com molho de pimentas e batatas,"R$ 85,00",https://images.unsplash.com/photo-1558030006-45c675171f3a?w=500&auto=format
+Bebidas,Coca-Cola Lata,Refrigerante lata 350ml bem gelada,"R$ 8,00",https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format
+Bebidas,Guaraná Antarctica,Refrigerante lata 350ml bem gelada,"R$ 8,00",https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&auto=format
+Bebidas,Água Mineral,Garrafa 500ml (Com ou sem gás),"R$ 5,00",https://images.unsplash.com/photo-1523362628745-0c100150b504?w=500&auto=format
+Bebidas,Suco de Laranja,Copo de 400ml feito na hora com frutas selecionadas,"R$ 14,00",https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format
+Bebidas,Gin Tônica Premium,Gin Tanqueray com especiarias e tônica,"R$ 32,00",https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&auto=format
+Sobremesas,Petit Gâteau,Bolo de chocolate quente com sorvete de creme,"R$ 26,00",https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=500&auto=format
+Sobremesas,Pudim da Casa,Receita tradicional com calda de caramelo dourada,"R$ 18,00",https://images.unsplash.com/photo-1528975604071-b4dc52a2d18c?w=500&auto=format

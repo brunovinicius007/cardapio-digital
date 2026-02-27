@@ -3,23 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio Digital</title>
+    <title>Restaurante Madero | Menu Digital</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>Nosso Cardápio</h1>
-        <p>Preços e pratos atualizados diretamente da nossa cozinha!</p>
-    </header>
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Buscar pratos...">
+    <!-- Hero Section / Boas-vindas -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-subtitle">Bem-vindo ao</span>
+            <h1 class="hero-title">Madero</h1>
+            <p class="hero-tagline">O Melhor Hambúrguer do Mundo</p>
+            <div class="hero-buttons">
+                <a href="#menu-anchor" class="btn-primary">Ver Cardápio</a>
+                <a href="https://wa.me/5511999999999" target="_blank" class="btn-outline">Reservar Mesa</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="app-container" id="menu-anchor">
+        <header>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="O que você deseja hoje?">
+            </div>
+
+            <nav id="category-nav">
+                <!-- Abas de categorias serão inseridas aqui -->
+            </nav>
+        </header>
+
+        <main id="menu-container">
+            <div class="loader">Preparando a mesa...</div>
+        </main>
+
+        <!-- Botão Flutuante do Carrinho -->
+        <div id="cart-toggle" class="cart-fab">
+            <i class="fas fa-shopping-bag"></i>
+            <span id="cart-count">0</span>
+        </div>
+
+        <!-- Sidebar do Carrinho -->
+        <aside id="cart-sidebar" class="hidden">
+            <div class="cart-header">
+                <h2>Seu Pedido</h2>
+                <button id="close-cart"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="cart-items">
+                <!-- Itens do carrinho -->
+            </div>
+            <div class="cart-footer">
+                <div class="total-container">
+                    <span>Total</span>
+                    <span id="cart-total">R$ 0,00</span>
+                </div>
+                <button id="checkout-btn">Finalizar e Pedir</button>
+            </div>
+        </aside>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Madero</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Av. Gastronômica, 1000 - Centro</p>
+                    <p><i class="fas fa-phone"></i> (11) 99999-9999</p>
+                </div>
+                <div class="footer-hours">
+                    <h4>Funcionamento</h4>
+                    <p>Terça a Sábado: 18h às 23h</p>
+                    <p>Domingo: 12h às 16h</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Restaurante Madero. Todos os direitos reservados.</p>
+            </div>
+        </footer>
     </div>
-    <main id="menu-container">
-        <!-- Os itens do cardápio serão inseridos aqui pelo JavaScript -->
-    </main>
-    <footer>
-        <p>Cardápio desenvolvido com ❤️</p>
-    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
